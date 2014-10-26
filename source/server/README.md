@@ -1,4 +1,4 @@
-bp-experiment
+Foodelicious - API
 =============
 
-Boilerplate / Framework experiment with node.js
+API for Foodelicious.
