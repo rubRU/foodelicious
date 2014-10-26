@@ -1,10 +1,11 @@
 global.io = new (require('./modules/io-core'))({
 	plugins: ['http', 'socket', 'session'],
 	http: {
-		port: 1337
+		port: process.env.PORT || 1338
 	}
 });
 
 global.Database = require('./modules/database');
 
-require('./features/example.js');
+require('./features/ingredients.js');
+require('./features/recipes.js');

@@ -46,7 +46,7 @@ function _bind(io, validation, fn) {
 	// If validation is not a function, make it one !
 	if (validation && typeof validation !== "function") {
 		validation = (function (schema) {
-			schema = { type: 'object', 'properties': schema };
+			schema = { type: 'object', 'properties': schema, strict: true };
 			return function (hash, callback) {
 				inspector.validate(schema, hash, function (err, result) {
 					if (err) return callback(err);

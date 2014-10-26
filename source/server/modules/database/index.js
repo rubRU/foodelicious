@@ -59,6 +59,21 @@ Database.prototype.delete = function (id, callback) {
 	return this;
 };
 
+Database.prototype.merge = function (doc, callback) {
+	var self = this;
+
+	async.waterfall([
+		function (next) {
+			self.get(doc.id, next);
+		},
+		function (previous, next) {
+			var insert = _.defaults(doc, previous);
+			return self.save(insert, next);
+		}
+	], callback)
+	return this;
+}
+
 Database.prototype._update = function(doc, callback) {
 	var self = this;
 	var id = doc.id;
