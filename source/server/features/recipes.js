@@ -50,7 +50,7 @@ io.http.on('get', '/recipes/:id', function (params, callback) {
 		},
 		function (ingredients, next) {
 			for (var i in _recipe.ingredients) {
-				ingredients[i].quantity = _recipe.ingredients[i].quantity;
+				ingredients[i].quantity = _recipe.ingredients.quantity;
 			}
 			_recipe.ingredients = ingredients;
 			return next(null, _recipe);
