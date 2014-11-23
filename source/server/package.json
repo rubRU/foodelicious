@@ -17,9 +17,6 @@
     "express": "^4.9.8",
     "express-session": "^1.9.0",
     "nedb": "^0.11.1",
-    "passport": "^0.2.1",
-    "passport-http": "^0.2.2",
-    "passport-local": "^1.0.0",
     "schema-inspector": "^1.4.8",
     "socket.io": "^1.1.0",
     "underscore": "^1.7.0"
