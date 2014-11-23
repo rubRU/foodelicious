@@ -18,7 +18,7 @@ function addFollower (user, newFollower, callback) {
 	async.waterfall([
 		// get follow table
 		function (next) {
-			return database.find({user: user}, next);
+			return database.find({ user: user }, next);
 		},
 		function (table, next) {
 			if (!table.hits.length) return next(ERROR(404, "Table for User [" +newFollower + "] not found."));
@@ -66,7 +66,7 @@ function getFollowers (user, start, callback) {
 				var _followers = [];
 				async.times(15, function (n, async) {
 					if ((start + n) >= table.count) return async(null);
-					Users.getUser(table.followers[start + n], function (err, follower) {			
+					Users.getUser(table.followers[start + n], function (err, follower) {
 						if (!err)
 							_followers.push(follower);
 						return async(null);
@@ -87,7 +87,7 @@ function notifyFollowers(user, action, callback) {
 			return database.find({ user: user }, next);
 		},
 		function (table, next) {
-			if (!table.hits.length) return next(ERROR(404, "Table for User [" + follower + "] not found."));
+			if (!table.hits.length) return next(ERROR(404, "Table for User [" + user + "] not found."));
 			table = table.hits[0];
 			async.each(table.followers, function (item, async) {
 				return Feed.save({
@@ -118,11 +118,9 @@ function getFeedForUser(user, start, callback) {
 		function (feed, next) {
 			return async.map(feed.hits, function (item, async) {
 				Actions.getAction(item.action, async);
-			}, function (err, actions) {
-				return next(err, actions);
-			});
+			}, next);
 		}
-	]);
+	], callback);
 }
 
 function getUserFeed(user, start, callback) {
@@ -133,11 +131,9 @@ function getUserFeed(user, start, callback) {
 		function (feed, next) {
 			return async.map(feed.hits, function (item, async) {
 				Actions.getAction(item.action, async);
-			}, function (err, actions) {
-				return next(err, actions);
-			});
+			}, next);
 		}
-	]);
+	], callback);
 }
 
 exports.notifyFollowers = notifyFollowers;
