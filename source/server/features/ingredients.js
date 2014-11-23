@@ -1,5 +1,4 @@
 var async = require('async');
-var ERROR = require('./_errors');
 var database = new Database('ingredients', { 'name': true });
 
 

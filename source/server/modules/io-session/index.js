@@ -6,8 +6,8 @@ config.server = {
 	db: 0, // integer
 	// pass: 'password'
 };
-config.secret = 'node-project-(9:)&*(&*TIH%)*&(*T0989yuih74z7Z3jV!gmp5p*@#^Gball';
-config.key = 'node-project-session';
+config.secret = 'pinyin-session-(9:)&*(&*TIH%)*&(*T0989yuih74z7Z3jV!gmp5p*@#^Gball';
+config.key = 'pinyin-session';
 
 var session = require('express-session'),
 	RedisStore = require('connect-redis')(session),
@@ -15,9 +15,9 @@ var session = require('express-session'),
 
 module.exports = ['http', function (io, http) {
 	var _plugin = io.register('session');
-	http.use(session({
+	http._app.use(session({
 		name: config.key,
-		resave: true, // Don't save session if unmodified
+		resave: true,
 		saveUninitialized: true, // Create session each time
 		store: sessionStore,
 		secret: config.secret,

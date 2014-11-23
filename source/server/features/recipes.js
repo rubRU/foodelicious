@@ -1,9 +1,11 @@
 var async = require('async');
 var _ = require('underscore');
-var ERROR = require('./_errors');
 var ingredients = new Database('ingredients');
 var database = new Database('recipes');
 
+// Package dependencies
+var Users = require('./users');
+var Comments = require('./comments');
 /*
 	@desc: Create recipe
 	@return: Return new recipe
@@ -22,17 +24,26 @@ io.http.on('post', '/recipes', {
 		}
 	},
 	steps: { type: 'array', items: { type: 'string', minLength: 1 }}
-}, function (params, callback) {
+}, [ Users.isAuthenticated, function (params, callback, connected) {
 	async.waterfall([
 		function (next) {
 			// Check if ingredients are goods
 			return async.map(_.pluck(params.ingredients, 'id'), ingredients.get.bind(ingredients), next);
 		},
 		function (docs, next) {
+
+			// Default parameters
+			params.likes = 0;
+			params.comments = 0;
+			params.stars = 0;
+
+			params.createdBy = connected.id;
+			// Create feed info 
+
 			return database.save(params, next);
 		}
 	], callback);
-});
+}]);
 
 io.http.on('get', '/recipes', function (params, callback) {
 	return database.findAll(params, callback);
@@ -57,3 +68,34 @@ io.http.on('get', '/recipes/:id', function (params, callback) {
 		}
 	], callback);
 });
+
+io.http.on('post', '/recipes/:id/comment', {
+	comment: { type: 'string', minLength: 1 }
+}, [ Users.isAuthenticated, function (params, callback, connected) {
+	var _recipe = null;
+	var _comment = null;
+
+	async.waterfall([
+		function (next) {
+			return database.get(params.id, next);
+		},
+		function (recipe, next) {
+			_recipe = recipe;
+			return Comments.createComment({
+				createdBy: connected.id,
+				comment: params.comment,
+				type: "comment",
+				ressource_type: "recipe",
+				ressource: recipe.id,
+			}, next);
+		},
+		function (comment, next) {
+			_comment = comment;
+			++_recipe.comments;
+			return database.save(_recipe, next);
+		},
+		function (recipe, next) {
+			return next(null, _comment);
+		}
+	], callback);
+}]);

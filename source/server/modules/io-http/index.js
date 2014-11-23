@@ -8,17 +8,36 @@ var async = require('async');
 ----------------*/
 
 /*
+	@desc: Merging check tool
+	@return: 
+	@params: Parameters
+*/
+
+function _arrangeParam(value) {
+	if (value.indexOf && value.indexOf(',') !== -1) {
+		return value.split(',');
+	}
+	return value;
+}
+
+/*
 	@desc: Merge parameters for request
 	@return: 
 	@params: Parameters
 */
 function _mergeParams(req, callback) {
 	var hash = req.query || {};
-	for (var key in req.body) { hash[key] = req.body[key]; }
+	for (var key in hash) {
+		hash[key] = _arrangeParam(hash[key]);
+	}
+	for (var key in req.body) {
+		hash[key] = _arrangeParam(req.body[key]);
+	}
 	for (var key in req.params) {
 		if (parseInt(key, 10).toString() !== key) // is not a number
-			hash[key] = req.params[key];
+			hash[key] = _arrangeParam(req.params[key]);
 	}
+	// console.log(hash);
 	return callback(null, hash);
 };
 
@@ -46,7 +65,7 @@ function _bind(io, validation, fn) {
 	// If validation is not a function, make it one !
 	if (validation && typeof validation !== "function") {
 		validation = (function (schema) {
-			schema = { type: 'object', 'properties': schema, strict: true };
+			schema = { type: 'object', 'properties': schema };
 			return function (hash, callback) {
 				inspector.validate(schema, hash, function (err, result) {
 					if (err) return callback(err);
@@ -65,18 +84,25 @@ function _bind(io, validation, fn) {
 			},
 			function (hash, next2) {
 				if (!validation) return next2(null, hash);
-				return validation(hash, next2);
+				return validation(hash, function (err, hash) {
+					if (err && io.plugins.http._error) return next2(io.plugins.http._error(err));
+					if (err) return next2(err);
+					return next2(null, hash);
+				});
 			},
 			function (hash, next2) {
 				if (typeof fn !== 'function') return next2(null, fn);
 				if (req.session) {
-					req.session.data = req.session.data || {};
-					return fn(hash, next2, req.session.data, {req: req, res: res});
+					if (req.user) { req.session.user = req.user };
+					return fn(hash, next2, req.session, {req: req, res: res});
 				}
-				return fn(hash, next2, {req: req, res: res});
+				else if (req.user) {
+					return fn(hash, next2, req.user, {req: req, res: res});
+				}
+				return fn(hash, next2, null, {req: req, res: res});
 			}
 		], function (err, result) {
-			if (err) return res.status(err.status || 500).send(err);
+			if (err) return res.status(err.status || 500).send((typeof err === 'string' ? { message: err } : err));
 			return res.send(_removeForbidden(io.config.http.filter || ['password'], result));
 		});
 	};
@@ -100,13 +126,38 @@ module.exports = function (io) {
 	_app.use(_bodyParser.urlencoded());
 
 	_plugin('_server', _server);
+	_plugin('_app', _app);
+
+	_plugin('launch', function (port) {
+		if (!_launched) {
+			_server.listen(io.config.http.port || 3000);
+			_launched = true;
+		}
+	});
 
 	/*
 		@desc: Middleware handler
 		@params: function(params, callback)
 	*/
+
 	_plugin('use', function (fn) {
-		_app.use(fn);
+		_app.use(function (req, res, next) {
+			async.waterfall([
+				function (next2) {
+					return _mergeParams(req, next2);
+				},
+				function (hash, next2) {
+					if (typeof fn !== 'function') return next2(null, fn);
+					if (req.session) {
+						return fn(hash, next2, req.session, {req: req, res: res});
+					}
+					return fn(hash, next2, null, {req: req, res: res});
+				}
+			], function (err, result) {
+				if (err) return res.status(err.status || 500).send((typeof err === 'string' ? { message: err } : err));
+				return next();
+			});
+		});
 	});
 	
 	/*
@@ -114,19 +165,35 @@ module.exports = function (io) {
 		@params: HTTP Method, path, function(params, callback)
 	*/
 	_plugin('on', function (method, path, validation, fn) {
-
-		if (!_launched) {
-			_server.listen(io.config.http.port || 3000);
-			_launched = true;
-		}
+		this.launch();
 
 		if (validation && !fn) {
 			fn = validation;
 			validation = null;
 		}
+		var _apply = (Array.isArray(fn) ? fn : [fn]);
+
 
 		if (!_app[method])
 			throw "Method [" + method + "] unknown.";
-		_app[method](path, _bind(io, validation, fn));
+		_apply.unshift(path);
+		_apply.push(_bind(io, validation, _apply.pop()));
+		_app[method].apply(_app, _apply);//(path, _bind(io, validation, fn));
+	});
+
+	/*
+		@desc: Pure middleware handler
+		@params: function(params, callback)
+	*/
+	_plugin('attach', function (fn) {
+		_app.use(fn);
+	});
+
+	/*
+		@desc: Bind error handler
+		@params: handler
+	*/
+	_plugin('error', function (fn) {
+		_plugin('_error', fn);
 	});
 }

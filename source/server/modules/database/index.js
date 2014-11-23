@@ -34,6 +34,8 @@ function Database(name, indexes) {
 
 Database.prototype.save = function(doc, callback) {
 	if (doc.id) return this._update(doc, callback);
+	doc.dateCreation = +(new Date());
+	doc.lastUpdate = +(new Date());
 	this.database.insert(doc, function (err, res) {
 		if (err) return callback(new DatabaseError("Unable to insert document [" + err + "]"));
 		callback(null, _docOut(res));
@@ -59,31 +61,33 @@ Database.prototype.delete = function (id, callback) {
 	return this;
 };
 
-Database.prototype.merge = function (doc, callback) {
-	var self = this;
-
-	async.waterfall([
-		function (next) {
-			self.get(doc.id, next);
-		},
-		function (previous, next) {
-			var insert = _.defaults(doc, previous);
-			return self.save(insert, next);
-		}
-	], callback)
-	return this;
-}
-
 Database.prototype._update = function(doc, callback) {
 	var self = this;
 	var id = doc.id;
 
+	doc.lastUpdate = +(new Date());
 	this.database.update({ _id: id }, doc, function (err, res) {
 		if (err) return callback(new DatabaseError("Unable to update document [" + id + "] [" + err + "]"));
 		return self.get(id, callback);
 	});
 	return this;
 };
+
+Database.prototype.merge = function(doc, callback) {
+	var self = this;
+	var id = doc.id;
+
+	async.waterfall([
+		function (next) {
+			self.get(id, next);
+		},
+		function (old, next) {
+			self.save(_mergeObject(old, doc), next);
+		}
+	], callback);
+	return this;
+};
+
 /*
 	database.find(query, callback);
 	database.find(query, options, callback);
@@ -202,6 +206,24 @@ function _ensureIndexes(database, indexes) {
 		if (err) return console.log(err);
 	});
 }
+
+/*
+	@desc: Deep merge for PUT
+	@return: object merged
+	@params: old, new values
+*/
+
+function _mergeObject(oldObj, newObj) {
+	for (var key in newObj) {
+		if (_.isObject(newObj[key])) {
+			oldObj[key] = oldObj[key] || {};
+			oldObj[key] = _mergeObject(oldObj[key], newObj[key]);
+		} else {
+			oldObj[key] = newObj[key];
+		}
+	}
+	return oldObj;
+};
 
 // Is _cache exist ?
 try {
