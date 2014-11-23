@@ -173,7 +173,7 @@ exports.getFullUser = getFullUser;
 	@params: None
 */
 function getUser(id, callback) {
-	return database.find({id: params.id}, {fields: ['name', 'id']}, callback);
+	return database.find({id: id}, {fields: ['name', 'id']}, callback);
 }
 exports.getUser = getUser;
 
@@ -248,3 +248,24 @@ io.http.on('get', '/users/:id/followers', function (params, callback, connected)
 		}
 	], callback);
 });
+
+/*
+	@desc: Get the user feed
+*/
+io.http.on('get', '/user/feed', [isAuthenticated, function (params, callback, connected) {
+	return Followers.getFeedForUser(connected.id, params.start || 0, callback);
+}]);
+
+/*
+	@desc: Get the user feed
+*/
+io.http.on('get', '/user/:id/feed', [isAuthenticated, function (params, callback, connected) {
+	async.waterfall([
+		function (next) {
+			return database.get(params.id, next);
+		},
+		function (user, next) {
+			return Followers.getUserFeed(user.id, next);
+		}
+	], callback);
+}]);

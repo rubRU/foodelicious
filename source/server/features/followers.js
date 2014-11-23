@@ -1,6 +1,10 @@
 var async = require('async');
 var database = new Database('follows', { 'user': true });
-var Users = new Database('users');
+
+var Feed = new Database('feed', { 'to': true, 'from': true, 'dateCreation': true });
+
+var Users = require('./users');
+var Actions = require('./actions');
 
 function createFollower (user, callback) {
 	return database.save({
@@ -62,7 +66,7 @@ function getFollowers (user, start, callback) {
 				var _followers = [];
 				async.times(15, function (n, async) {
 					if ((start + n) >= table.count) return async(null);
-					Users.get(table.followers[start + n], function (err, follower) {			
+					Users.getUser(table.followers[start + n], function (err, follower) {			
 						if (!err)
 							_followers.push(follower);
 						return async(null);
@@ -76,7 +80,7 @@ function getFollowers (user, start, callback) {
 	], callback);
 }
 
-function notifyFollowers(user, params, callback) {
+function notifyFollowers(user, action, callback) {
 	async.waterfall([
 		// Get table
 		function (next) {
@@ -86,13 +90,54 @@ function notifyFollowers(user, params, callback) {
 			if (!table.hits.length) return next(ERROR(404, "Table for User [" + follower + "] not found."));
 			table = table.hits[0];
 			async.each(table.followers, function (item, async) {
-				return Feed.createPost(params, async);
+				return Feed.save({
+					to: item,
+					from: action.createdBy,
+					action: action.id
+				}, async);
 			}, next);
 		},
 		function (next) {
+			return Feed.save({
+				to: action.createdBy,
+				from: action.createdBy,
+				action: action.id
+			}, next);
+		},
+		function (feedMsg, next) {
 			return next(null, { ok: true });
 		}
 	], callback);
+}
+
+function getFeedForUser(user, start, callback) {
+	async.waterfall([
+		function (next) {
+			return Feed.find({ to: user }, { start: start, sort: { "dateCreation": 1 } }, next);
+		},
+		function (feed, next) {
+			return async.map(feed.hits, function (item, async) {
+				Actions.getAction(item.action, async);
+			}, function (err, actions) {
+				return next(err, actions);
+			});
+		}
+	]);
+}
+
+function getUserFeed(user, start, callback) {
+	async.waterfall([
+		function (next) {
+			return Feed.find({ to: user, from: user }, { start: start, sort: { "dateCreation": 1 } }, next);
+		},
+		function (feed, next) {
+			return async.map(feed.hits, function (item, async) {
+				Actions.getAction(item.action, async);
+			}, function (err, actions) {
+				return next(err, actions);
+			});
+		}
+	]);
 }
 
 exports.notifyFollowers = notifyFollowers;
@@ -100,3 +145,5 @@ exports.createFollower = createFollower;
 exports.addFollower = addFollower;
 exports.removeFollower = removeFollower;
 exports.getFollowers = getFollowers;
+exports.getUserFeed = getUserFeed;
+exports.getFeedForUser = getFeedForUser;

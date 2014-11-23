@@ -5,7 +5,7 @@ var database = new Database('recipes');
 
 // Package dependencies
 var Users = require('./users');
-var Comments = require('./comments');
+var Actions = require('./actions');
 /*
 	@desc: Create recipe
 	@return: Return new recipe
@@ -81,10 +81,9 @@ io.http.on('post', '/recipes/:id/comment', {
 		},
 		function (recipe, next) {
 			_recipe = recipe;
-			return Comments.createComment({
+			return Actions.comment({
 				createdBy: connected.id,
 				comment: params.comment,
-				type: "comment",
 				ressource_type: "recipe",
 				ressource: recipe.id,
 			}, next);
@@ -99,3 +98,19 @@ io.http.on('post', '/recipes/:id/comment', {
 		}
 	], callback);
 }]);
+
+io.http.on('get', '/recipes/:id/comments', function (params, callback) {
+	async.waterfall([
+		function (next) {
+			return database.get(params.id, next);
+		},
+		function (recipe, next) {
+			params.start = params.start || 0;
+			params.limit = params.limit || 15;
+			return Actions.findActions({ ressource: params.id, type: 'comment'}, { start: params.start, limit: params.limit }, next);
+		},
+		function (comments, next) {
+			return next(null, comments.hits);
+		}
+	], callback);
+});
