@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+    	android:orientation="vertical"
+    	android:background="@color/transparentBlack" >
+    
+        <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:baselineAligned="false"
+	        android:orientation="horizontal" >
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	
+	        <EditText
+	            android:id="@+id/name"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="60"
+	            android:hint="@string/name"
+	            android:inputType="textPersonName" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	        <ImageView 
+		        android:id="@+id/nameError"
+		      	android:layout_width="0dp" 
+		      	android:layout_height="wrap_content"
+		      	android:layout_weight="5"
+		      	android:src="@drawable/close"
+	            android:adjustViewBounds="true"
+	            android:visibility="invisible"  />
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:baselineAligned="false"
+	        android:orientation="horizontal" >
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	
+	        <EditText
+	            android:id="@+id/lastName"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="60"
+	            android:hint="@string/lastName"
+	            android:inputType="textPersonName" />
+	        
+	        <ImageView 
+		        android:id="@+id/lastNameError"
+		      	android:layout_width="0dp" 
+		      	android:layout_height="wrap_content"
+		      	android:layout_weight="5"
+		      	android:src="@drawable/close"
+	            android:adjustViewBounds="true"
+	            android:visibility="invisible"  />
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:baselineAligned="false"
+	        android:orientation="horizontal" >
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	
+	        <EditText
+	            android:id="@+id/email"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="60"
+	            android:hint="@string/email"
+	            android:inputType="textEmailAddress" />
+	        
+	        <ImageView 
+		        android:id="@+id/emailError"
+		      	android:layout_width="0dp" 
+		      	android:layout_height="wrap_content"
+		      	android:layout_weight="5"
+		      	android:src="@drawable/close"
+	            android:adjustViewBounds="true"
+	            android:visibility="invisible"  />
+	
+	        <Space
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="20"
+	            android:visibility="invisible" />
+	    </LinearLayout>
+	
+	    <LinearLayout 
+	      	android:layout_width="match_parent"
+	      	android:layout_height="wrap_content"
+	      	android:orientation="horizontal"
+	      	android:baselineAligned="false" >
+	     
+	         
+	    	<Space
+	    		android:layout_width="0dp" 
+	       		android:layout_height="wrap_content"
+	       		android:layout_weight="20"
+	       		android:visibility="invisible" />
+	      
+	    	<EditText
+	       		android:id="@+id/password"
+	       		android:layout_width="0dp" 
+	       		android:layout_height="wrap_content"
+	       		android:layout_weight="60"
+	       		android:inputType="textPassword"
+	       		android:hint="@string/password" />
+	    	
+	    	<ImageView 
+		        android:id="@+id/passwordError"
+		      	android:layout_width="0dp" 
+		      	android:layout_height="wrap_content"
+		      	android:layout_weight="5"
+		      	android:src="@drawable/close"
+	            android:adjustViewBounds="true"
+	            android:visibility="invisible"  />
+	       	
+	    	<Space
+	       		android:layout_width="0dp" 
+	       		android:layout_height="wrap_content"
+	       		android:layout_weight="20"
+	       		android:visibility="invisible" />
+	      
+	  	</LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:baselineAligned="false"
+	        android:gravity="center"
+	        android:orientation="horizontal" >
+	
+	        <RadioGroup
+	            android:id="@+id/gender"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+	
+	            <RadioButton
+	                android:id="@+id/male"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:checked="true"
+	                android:text="@string/male" />
+	
+	            <RadioButton
+	                android:id="@+id/female"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/female" />
+	
+	        </RadioGroup>
+	        
+	    </LinearLayout>
+	    
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/foodManiaRed"
+                android:padding="@dimen/padding"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/foodManiaGreen"
+                android:padding="@dimen/padding"
+                android:text="@string/ok" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

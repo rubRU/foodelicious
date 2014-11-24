@@ -1,0 +1,11 @@
+<resources>
+
+    <dimen name="textSize">15sp</dimen>
+    <dimen name="textSizeSmall">10sp</dimen>
+    <dimen name="textSizeExtraSmall">5sp</dimen>
+    
+    <dimen name="padding">10dp</dimen>
+    <dimen name="paddingSmall">8dp</dimen>
+    <dimen name="paddingLarge">13dp</dimen>
+
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sona</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="applicationId">672669452811477</string>
+    <string name="title_activity_main2">MainActivity</string>
+
+    <string name="connexion">Connexion</string>
+    <string name="createAccount">Create an account</string>
+    <string name="alreadyAnAccount">Already an account?</string>
+    
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="name">Name</string>
+    <string name="lastName">Last name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    
+    <string name="noConnectionError">You are not connected to internet.</string>
+    <string name="serverUnreachableError">Server unreachable.</string>
+    
+</resources>

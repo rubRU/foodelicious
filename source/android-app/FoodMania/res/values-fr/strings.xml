@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="connexion">Connexion</string>
+    <string name="createAccount">Créer un compte</string>
+    <string name="alreadyAnAccount">Déjà un compte?</string>
+    
+    <string name="ok">OK</string>
+    <string name="cancel">Annuler</string>
+    <string name="name">Prénom</string>
+    <string name="lastName">Nom</string>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="male">Homme</string>
+    <string name="female">Femme</string>
+    
+    <string name="noConnectionError">Vous n\'êtes pas connecté à internet.</string>
+    <string name="serverUnreachableError">Aucune réponse du serveur.</string>
+
+</resources>
