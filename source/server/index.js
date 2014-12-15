@@ -10,8 +10,7 @@ global.PACKAGE = require('./package.json');
 
 
 io.http.error(function (err) {
-	console.log(err);
-	return ERROR(400, 'Please follow API instructions on foodelicious Wiki');
+	return ERROR(400, 'Please follow API instructions on foodelicious wiki.', err);
 });
 // CORS
 io.http.use(function (params, callback, connected, settings) {
