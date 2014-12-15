@@ -1,5 +1,5 @@
 {
-  "name": "Foodelicious API",
+  "name": "foodelicious-api",
   "version": "0.1.0",
   "description": "REST API for Foodelicious",
   "main": "index.js",
