@@ -21,7 +21,7 @@ io.http.use(function (params, callback, connected, settings) {
     return callback(null);
 });
 io.http.on('get', '/', {
-	name: PACKAGE.name
+	name: PACKAGE.name,
 	'version': PACKAGE.version,
 	date: new Date(),
 });
