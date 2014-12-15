@@ -105,7 +105,7 @@ io.http.on('post', '/login', {
 			return database.find({ email: params.email }, next);
 		},
 		function (users, next) {
-			if (users.hits.length) return next(true);
+			if (!users.hits.length) return next(true);
 			_user = users.hits[0];
 			bcrypt.compare(params.password, _user.password, next);
 		},

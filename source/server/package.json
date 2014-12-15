@@ -1,7 +1,7 @@
 {
-  "name": "bp-experiment",
+  "name": "Foodelicious API",
   "version": "0.1.0",
-  "description": "Boilerplate / Framework experiment in NodeJS",
+  "description": "REST API for Foodelicious",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests/ -u tdd -t 5000 -R spec"
