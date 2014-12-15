@@ -64,8 +64,14 @@ suite('Recipes', function () {
 			should.exist(hash.id);
 
 			should.exist(hash.ingredients);
-			hash.ingredients.should.containEql(DATA.ingredients[0]);
-			hash.ingredients.should.containEql(DATA.ingredients[1]);
+			hash.ingredients[0].should.have.property('id', DATA.ingredients[0].id);
+			hash.ingredients[0].should.have.property('name', DATA.ingredients[0].name);
+			hash.ingredients[0].should.have.property('quantity', DATA.recipes[0].ingredients[0].quantity);
+
+			hash.ingredients[1].should.have.property('id', DATA.ingredients[1].id);
+			hash.ingredients[1].should.have.property('name', DATA.ingredients[1].name);
+			hash.ingredients[1].should.have.property('quantity', DATA.recipes[0].ingredients[1].quantity);
+
 
 			done();
 		});
