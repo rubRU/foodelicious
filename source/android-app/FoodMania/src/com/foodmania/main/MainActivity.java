@@ -1,131 +1,170 @@
 package com.foodmania.main;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
+import java.util.Locale;
 
 import com.foodmania.R;
-import com.foodmania.main.database.CredentialsDataSource;
-import com.foodmania.main.database.entities.Credentials;
-import com.foodmania.main.entities.Server;
-import com.foodmania.main.entities.User;
-import com.foodmania.main.login.FragmentLogin;
-import com.foodmania.main.login.FragmentRegister;
-import com.foodmania.main.tools.ConnectionDetector;
-import com.foodmania.main.tools.FragmentErrorDisplay;
-import com.foodmania.main.tools.HttpRequest;
+import com.foodmania.R.id;
+import com.foodmania.R.layout;
+import com.foodmania.R.string;
 
-public class MainActivity extends FragmentActivity implements OnClickListener {
+import android.app.Activity;
+import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-	public Button				mCreateAccount;
-	
-	public boolean				canExit = true;
-	
-	private Thread 				mTryConnect = new Thread(new Runnable() {
-		final HttpRequest httpRequest = new HttpRequest();
-		
-		@Override
-		public void run() {
-			CredentialsDataSource datasource = new CredentialsDataSource(MainActivity.this);
-			ConnectionDetector connectionDetector = new ConnectionDetector(MainActivity.this);
-			
-			datasource.open();
-			Credentials credentials = datasource.getCredentials();
-			
-			/*if (!httpRequest.isServerRunnig(Server.R_ROOT) || !connectionDetector.isConnectingToInternet()) {
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				Fragment errorDisplay = new FragmentErrorDisplay(!connectionDetector.isConnectingToInternet() ? R.string.noConnectionError : R.string.serverUnreachableError);
-			
-				ft.replace(R.id.errorDisplay, errorDisplay);
-				ft.commit();
-				datasource.close();
-				
-				return;
-			} else if (credentials != null && User.gUser.isConnected(credentials.getToken(), credentials.getEmail())) {
-			    Toast.makeText(getApplicationContext(), "CONNECTED : " + credentials.getToken(), Toast.LENGTH_LONG).show();
-			} else {*/
-				mCreateAccount.post(new Runnable() {
-			        public void run() {
-			        	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			        	Fragment errorDisplayFragment = getSupportFragmentManager().findFragmentById(R.id.errorDisplay);
-			        	Fragment loginSonaFragment = new FragmentLogin();
-			        	
-			        	if (errorDisplayFragment != null) {
-			        		ft.remove(errorDisplayFragment);
-			        	}
-			        	ft.replace(R.id.accountManager, loginSonaFragment);
-			    		ft.commit();
-			    	
-			    		mCreateAccount.setVisibility(View.VISIBLE);
-			        }
-			    });
-			/*}*/
-			datasource.close();
-		}
-	});
-	  
+public class MainActivity extends Activity implements ActionBar.TabListener {
+
+	/**
+	 * The {@link android.support.v4.view.PagerAdapter} that will provide
+	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
+	 * derivative, which will keep every loaded fragment in memory. If this
+	 * becomes too memory intensive, it may be best to switch to a
+	 * {@link android.support.v13.app.FragmentStatePagerAdapter}.
+	 */
+	SectionsPagerAdapter mSectionsPagerAdapter;
+
+	/**
+	 * The {@link ViewPager} that will host the section contents.
+	 */
+	ViewPager mViewPager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		mCreateAccount = (Button) findViewById(R.id.createAccount);
+		final ActionBar actionBar = getActionBar();
 		
-		mCreateAccount.setOnClickListener(this);
+		getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		getActionBar().setDisplayShowHomeEnabled(false);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		
+		// Create the adapter that will return a fragment for each of the three
+		// primary sections of the activity.
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+
+		// Set up the ViewPager with the sections adapter.
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+
+		// When swiping between different sections, select the corresponding
+		// tab. We can also use ActionBar.Tab#select() to do this if we have
+		// a reference to the Tab.
+		mViewPager
+				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+					@Override
+					public void onPageSelected(int position) {
+						actionBar.setSelectedNavigationItem(position);
+					}
+				});
+
+		// For each of the sections in the app, add a tab to the action bar.
+		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+			// Create a tab with text corresponding to the page title defined by
+			// the adapter. Also specify this Activity object, which implements
+			// the TabListener interface, as the callback (listener) for when
+			// this tab is selected.
+			actionBar.addTab(actionBar.newTab()
+					.setText(mSectionsPagerAdapter.getPageTitle(i))
+					.setTabListener(this));
+		}
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	public void onTabSelected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) {
+		mViewPager.setCurrentItem(tab.getPosition());
 	}
-	
+
 	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (mTryConnect.getState() != Thread.State.NEW) {
-			mTryConnect.run();
-		} else {
-			mTryConnect.start();
+	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	}
+
+	@Override
+	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	}
+
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+	 * one of the sections/tabs/pages.
+	 */
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
-	}
-	
-	@Override
-	public void onBackPressed() {
-		if (canExit) {
-			super.onBackPressed();
-			finish();
-		} else {
-			FragmentRegister fRegister = (FragmentRegister) getSupportFragmentManager().findFragmentById(R.id.accountManager);
-			
-			if (fRegister != null) {
-				fRegister.cancel();
+
+		@Override
+		public Fragment getItem(int position) {
+			// getItem is called to instantiate the fragment for the given page.
+			// Return a PlaceholderFragment (defined as a static inner class
+			// below).
+			return FragmentFeed.newInstance();
+		}
+
+		@Override
+		public int getCount() {
+			// Show 3 total pages.
+			return 3;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			Locale l = Locale.getDefault();
+			switch (position) {
+			case 0:
+				return getString(R.string.title_section1).toUpperCase(l);
+			case 1:
+				return getString(R.string.title_section2).toUpperCase(l);
+			case 2:
+				return getString(R.string.title_section3).toUpperCase(l);
 			}
-			canExit = true;
-			mCreateAccount.setVisibility(View.VISIBLE);
+			return null;
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		
-		switch (v.getId()) {
-		case R.id.createAccount:
-			Fragment registerSonaFragment = new FragmentRegister();
-		
-			ft.replace(R.id.accountManager, registerSonaFragment);
-			ft.addToBackStack(null);
-			ft.commit();
-			
-			mCreateAccount.setVisibility(View.GONE);
-			break;
+	/**
+	 * A placeholder fragment containing a simple view.
+	 */
+	public static class PlaceholderFragment extends Fragment {
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		/**
+		 * Returns a new instance of this fragment for the given section number.
+		 */
+		public static PlaceholderFragment newInstance(int sectionNumber) {
+			PlaceholderFragment fragment = new PlaceholderFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
 		}
-		canExit = false;
+
+		public PlaceholderFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			/*View rootView = inflater.inflate(R.layout.fragment_tabs, container,
+					false);
+			return rootView;*/
+			return null;
+		}
 	}
+
 }

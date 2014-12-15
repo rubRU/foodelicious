@@ -15,9 +15,9 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 
 import com.foodmania.R;
-import com.foodmania.main.MainActivity;
+import com.foodmania.main.LoginActivity;
+import com.foodmania.main.entities.HttpRequest;
 import com.foodmania.main.entities.Server;
-import com.foodmania.main.tools.HttpRequest;
 
 public class FragmentRegister extends Fragment implements OnClickListener {
 
@@ -93,9 +93,8 @@ public class FragmentRegister extends Fragment implements OnClickListener {
 				&& lastName.length() > 0
 				&& email.length() > 0
 				&& password.length() > 0) {
-			final HttpRequest httpRequest = new HttpRequest();
 			
-			httpRequest.post(Server.R_SIGNUP, 
+			HttpRequest.post(Server.R_SIGNUP, 
 					"name", name,
 					"lastName", lastName, 
 					"email", email,
@@ -115,6 +114,6 @@ public class FragmentRegister extends Fragment implements OnClickListener {
 		ft.remove(mActivity.getSupportFragmentManager().findFragmentById(R.id.accountManager));
 		ft.commit();
 		
-		((MainActivity) mActivity).mCreateAccount.setVisibility(View.VISIBLE);
+		((LoginActivity) mActivity).mCreateAccount.setVisibility(View.VISIBLE);
 	}
 }

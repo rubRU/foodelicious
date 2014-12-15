@@ -18,14 +18,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.foodmania.R;
-import com.foodmania.main.FeedActivity;
 import com.foodmania.main.MainActivity;
 import com.foodmania.main.database.CredentialsDataSource;
+import com.foodmania.main.entities.HttpRequest;
 import com.foodmania.main.entities.Server;
-import com.foodmania.main.tools.HttpRequest;
 
 public class FragmentLogin extends Fragment implements OnClickListener {
 
+	private static final String	TAG = "FragmentLogin";
+	
 	private FragmentActivity 	mActivity;
 
 	private EditText			mEmail;
@@ -72,12 +73,11 @@ public class FragmentLogin extends Fragment implements OnClickListener {
 	public void login() {
 		String email = mEmail.getText().toString();
 		String password = mPassword.getText().toString();
-		HttpRequest httpRequest = new HttpRequest();
 		
-		/*httpRequest.post(Server.R_LOGIN, 
+		HttpRequest.post(Server.R_LOGIN, 
 				"email", email,
 				"password", password);
-		if (httpRequest.mJsonResult != null && httpRequest.mStatus == 200) {
+		if (HttpRequest.getJsonResult() != null && HttpRequest.getStatus() == Server.SU_OK) {
 			try {
 				CredentialsDataSource datasource = new CredentialsDataSource(mActivity);
 				
@@ -85,18 +85,16 @@ public class FragmentLogin extends Fragment implements OnClickListener {
 				if (datasource.getCredentials() != null) {
 					datasource.deleteCredentials(datasource.getCredentials());
 				}
-				datasource.createCredentials(httpRequest.mJsonResult.getString("token"));
+				datasource.createCredentials(HttpRequest.getJsonResult().getString("id"), HttpRequest.getJsonResult().getString("token"));
 				datasource.close();
-				
-				setError(httpRequest.mJsonResult.getInt("code"));
+				setError(HttpRequest.getJsonResult().getInt("code"));
 			} catch (JSONException e) {
-				Log.e(getClass().getName() + " : JSONException", "error = " + e);
+				Log.e(TAG, "JSONException: error = " + e);
 				
-				return;
+				mActivity.startActivity(new Intent(mActivity, MainActivity.class)
+					.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 			}
-		}*/
-		Intent i = new Intent(mActivity, FeedActivity.class);
-		mActivity.startActivity(i);
+		}
 	}
 	
 	public void cancel() {

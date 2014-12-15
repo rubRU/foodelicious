@@ -1,11 +1,11 @@
 package com.foodmania.main.entities;
 
-import com.foodmania.main.tools.HttpRequest;
 
 public class User {
 	
-	public static User		gUser = new User();
+	private static User		gUser;
 	
+	private String			mId;
 	private String			mName;
 	private String			mLastName;
 	private String			mEmail;
@@ -16,42 +16,49 @@ public class User {
 		m, f;
 	}
 	
-	public User() {
-	}
-	
-	public User(String name, String lastName, String email, EGender gender) {
+	private User(String id, String name, String lastName, String email, EGender gender) {
+		this.mId = id;
 		this.mName = name;
 		this.mLastName = lastName;
 		this.mEmail = email;
 		this.mGender = gender;
 	}
 	
-	public boolean isConnected(String token, String email) {
-		final HttpRequest httpRequest = new HttpRequest();
-		boolean sucess = httpRequest.post(Server.R_PROFILE,
-				"token", token,
-				"email", email);
+	public static User newUser(String id, String name, String lastName, String email, EGender gender) {
+		return gUser =  new User(id, name, lastName, email, gender);
+	}
+	
+	public static boolean isConnected(String id, String token) {
+		boolean sucess = HttpRequest.get(Server.R_PROFILE, id, token);
 		
-		return (sucess && httpRequest.mStatus != 201 ? false : true);
+		return (sucess && HttpRequest.getStatus() == Server.SU_OK ? true : false);
 	}
 	
-	public String getName() {
-		return this.mName;
+	public static User getInstance() {
+		return gUser;
 	}
 	
-	public String getLastName() {
-		return this.mLastName;
+	public static String getId() {
+		return gUser.mId;
 	}
 	
-	public String getEmail() {
-		return this.mEmail;
+	public static String getName() {
+		return gUser.mName;
 	}
 	
-	public EGender  getGender() {
-		return this.mGender;
+	public static String getLastName() {
+		return gUser.mLastName;
 	}
 	
-	public UserSettings getSettings() {
-		return this.mSettings;
+	public static String getEmail() {
+		return gUser.mEmail;
+	}
+	
+	public static EGender  getGender() {
+		return gUser.mGender;
+	}
+	
+	public static UserSettings getSettings() {
+		return gUser.mSettings;
 	}
 }

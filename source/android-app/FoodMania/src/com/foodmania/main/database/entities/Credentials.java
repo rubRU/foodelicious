@@ -3,15 +3,15 @@ package com.foodmania.main.database.entities;
 public class Credentials {
 
 	private String		mId;
+	private String		mUserId;
 	private String 		mToken;
-	private String 		mEmail;
  
 	public Credentials(){
 	}
  
-	public Credentials(String token, String email){
+	public Credentials(String userId, String token){
+		this.mUserId = userId;
 		mToken = token;
-		mEmail = email;
 	}
  
 	public String getId() {
@@ -22,19 +22,19 @@ public class Credentials {
 		mId = id;
 	}
 	
+	public String getUserId() {
+		return mUserId;
+	}
+	
+	public void setUserId(String userId) {
+		mUserId = userId;
+	}
+	
 	public String getToken() {
 		return mToken;
 	}
  
 	public void setToken(String token) {
 		mToken = token;
-	}
-	
-	public String getEmail() {
-		return mEmail;
-	}
- 
-	public void setEmail(String email) {
-		mEmail = email;
 	}
 }

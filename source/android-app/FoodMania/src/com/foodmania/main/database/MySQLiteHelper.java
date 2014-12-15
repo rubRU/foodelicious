@@ -12,6 +12,8 @@ import android.util.Log;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 	
+	private static final String 				TAG = "MySQLiteHelper";
+	
 	public Map<String, Map<String, String>> 	tables = new HashMap<String, Map<String, String>>();
 
 	private static final String 				DATABASE_NAME = "sona.db";
@@ -22,8 +24,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 		Map<String, String> credentials = new HashMap<String, String>();
 		
 		credentials.put("_id", "INTEGER PRIMARY KEY AUTOINCREMENT");
+		credentials.put("userId", "TEXT");
 		credentials.put("token", "TEXT");
-		credentials.put("email", "TEXT");
 		tables.put("Credentials", credentials);
 	}
 
@@ -39,19 +41,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 			while (colummsIterator.hasNext()) {
 				Entry<String, String> colummsEntry = (Entry<String, String>)colummsIterator.next();
-				Log.e("DB", colummsEntry.getKey() + " " + colummsEntry.getValue());
+				Log.e(TAG, colummsEntry.getKey() + " " + colummsEntry.getValue());
 				dbCreateQuery += colummsEntry.getKey() + " " + colummsEntry.getValue();
 				dbCreateQuery += colummsIterator.hasNext() ? ", " : ")";
 			}
 			dbCreateQuery += tablesIterator.hasNext() ? ", " : ";";
 		}
-		Log.e("DB", dbCreateQuery);
+		Log.e(TAG, dbCreateQuery);
 		database.execSQL(dbCreateQuery);
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.e(MySQLiteHelper.class.getName(), "Upgrading database from version "
+		Log.e(TAG, "Upgrading database from version "
 				+ oldVersion
 				+ " to "
 				+ newVersion
