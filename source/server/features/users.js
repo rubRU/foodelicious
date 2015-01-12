@@ -274,7 +274,7 @@ io.http.on('get', '/users/:id/feed', [getConnected, function (params, callback, 
 			return Followers.getUserFeed(user.id, params.start || 0, next);
 		}
 	], callback);
-}]);s
+}]);
 // To deprecate
 io.http.on('get', '/user/:id/feed', [getConnected, function (params, callback, connected) {
 	async.waterfall([
