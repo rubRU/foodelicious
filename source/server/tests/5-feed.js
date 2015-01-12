@@ -11,7 +11,7 @@ var should = require('should');
 suite('Feed', function () {
 
 	test('User 1 should comment recipe', function (done) {
-		request.post('/recipes/' + DATA.recipes[0].id + '/comment')
+		request.post('/recipes/' + DATA.recipes[0].id + '/comments')
 		.set('X-API-user', DATA.users[0].id)
 		.set('X-API-token', DATA.users[0].token)
 		.send({
@@ -136,7 +136,7 @@ suite('Feed', function () {
 	});
 
 	test('User 1 should comment recipe', function (done) {
-		request.post('/recipes/' + DATA.recipes[0].id + '/comment')
+		request.post('/recipes/' + DATA.recipes[0].id + '/comments')
 		.set('X-API-user', DATA.users[0].id)
 		.set('X-API-token', DATA.users[0].token)
 		.send({
@@ -173,6 +173,23 @@ suite('Feed', function () {
 	});
 
 	test('Should get feed for designed user', function (done) {
+		request.get('/users/' + DATA.users[0].id + '/feed')
+		.expect(200, function (err, ret) {
+			should.not.exist(err);
+			should.exist(ret);
+			should.exist(ret.body);
+			var hash = ret.body;
+
+			hash.length.should.equal(2);
+
+			done();
+		});		
+	});
+
+});
+
+suite('Deprecated methods - Migration support test', function () {
+	test('Should get feed for designed user', function (done) {
 		request.get('/user/' + DATA.users[0].id + '/feed')
 		.expect(200, function (err, ret) {
 			should.not.exist(err);
@@ -186,4 +203,45 @@ suite('Feed', function () {
 		});		
 	});
 
+	test('User 1 should comment recipe', function (done) {
+		request.post('/recipes/' + DATA.recipes[0].id + '/comment')
+		.set('X-API-user', DATA.users[0].id)
+		.set('X-API-token', DATA.users[0].token)
+		.send({
+			comment: "Trop bon !"
+		})
+		.expect(200, function (err, ret) {
+			should.not.exist(err);
+			should.exist(ret);
+			should.exist(ret.body);
+			var hash = ret.body;
+
+			hash.comment.should.equal("Trop bon !");
+			hash.createdBy.should.equal(DATA.users[0].id);
+			hash.ressource.should.equal(DATA.recipes[0].id);
+
+			done();
+		});
+	});
+
+	test('User 1 should comment recipe', function (done) {
+		request.post('/recipes/' + DATA.recipes[0].id + '/comment')
+		.set('X-API-user', DATA.users[0].id)
+		.set('X-API-token', DATA.users[0].token)
+		.send({
+			comment: "Vraiment magnifique"
+		})
+		.expect(200, function (err, ret) {
+			should.not.exist(err);
+			should.exist(ret);
+			should.exist(ret.body);
+			var hash = ret.body;
+
+			hash.comment.should.equal("Vraiment magnifique");
+			hash.createdBy.should.equal(DATA.users[0].id);
+			hash.ressource.should.equal(DATA.recipes[0].id);
+
+			done();
+		});
+	});
 });

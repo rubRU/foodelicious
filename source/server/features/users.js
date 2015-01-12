@@ -162,7 +162,10 @@ io.http.on('get', '/user', [ isAuthenticated, function (params, callback, user) 
 	@params: None
 */
 function getFullUser(params, callback) {
-	return database.get(params.id || params, callback);
+	return database.get(params.id || params, function (err, res) {
+		if (err) return callback(ERROR(err.status, err.message));
+		return callback(null, res);
+	});
 }
 io.http.on('get', '/users/:id', getFullUser);
 exports.getFullUser = getFullUser;
@@ -262,6 +265,17 @@ io.http.on('get', '/user/feed', [isAuthenticated, function (params, callback, co
 /*
 	@desc: Get the user feed
 */
+io.http.on('get', '/users/:id/feed', [getConnected, function (params, callback, connected) {
+	async.waterfall([
+		function (next) {
+			return database.get(params.id, next);
+		},
+		function (user, next) {
+			return Followers.getUserFeed(user.id, params.start || 0, next);
+		}
+	], callback);
+}]);s
+// To deprecate
 io.http.on('get', '/user/:id/feed', [getConnected, function (params, callback, connected) {
 	async.waterfall([
 		function (next) {

@@ -10,7 +10,16 @@ global.PACKAGE = require('./package.json');
 
 
 io.http.error(function (err) {
-	return ERROR(400, 'Please follow API instructions on foodelicious wiki.', err);
+	if (!err || !Array.isArray(err) || !err.length)
+		return ERROR(400, 'Please follow API instructions on foodelicious wiki.', err);
+	var msg = "";
+	for (var i in err) {
+		if (err[i].property)
+			msg += err[i].property.replace('@.', '') + " ";
+		if (err[i].message)
+			msg += err[i].message + ".\n"; 
+	}
+	return ERROR(400, msg, err);
 });
 // CORS
 io.http.use(function (params, callback, connected, settings) {

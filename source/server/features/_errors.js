@@ -3,6 +3,7 @@ var database = new Database('errors_' + new Date());
 var ERRORS = {
 	400: "Bad parameters",
 	401: "Bad authentification",
+	404: "Not found",
 	403: "Forbidden",
 	500: "Internal error"
 }

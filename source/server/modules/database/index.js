@@ -6,9 +6,9 @@ var FOLDER = __dirname + '/_cache';
 var DATABASES = {};
 
 // Error
-function DatabaseError(message) {
+function DatabaseError(message, status) {
 	this.name = "DatabaseError";
-	this.status = 500;
+	this.status = status || 500;
 	this.hidden = true;
 	this.message = message;
 }
@@ -46,7 +46,7 @@ Database.prototype.save = function(doc, callback) {
 Database.prototype.get = function (id, callback) {
 	this.database.findOne({ _id: id }, function (err, res) {
 		if (err) return callback(new DatabaseError("Unable to get document [" + id + "] [" + err + "]"));
-		if (!res) return callback(new DatabaseError("Cannot find document [" + id + "]"));
+		if (!res) return callback(new DatabaseError("Cannot find document [" + id + "]", 404));
 		return callback(null, _docOut(res));
 	});
 	return this;
@@ -55,7 +55,7 @@ Database.prototype.get = function (id, callback) {
 Database.prototype.delete = function (id, callback) {
 	this.database.remove({ _id: id }, function (err, res) {
 		if (err) return callback(new DatabaseError("Unable to remove document [" + id + "] [" + err + "]"));
-		if (!res) return callback(new DatabaseError("Cannot find document [" + id + "]"));
+		if (!res) return callback(new DatabaseError("Cannot find document [" + id + "]", 404));
 		return callback(null, { ok: true });
 	});
 	return this;
@@ -132,7 +132,7 @@ Database.prototype.find = function(query, options, callback) {
 			q.exec(next);
 		}	
 	], function (err, res) {
-		if (err) return callback(new DatabaseError("Unable to find documents [" + err + "]"));
+		if (err) return callback(new DatabaseError("Unable to find documents [" + err + "]", 404));
 		for (var i in res) {
 			res[i] = _docOut(res[i]);
 		}

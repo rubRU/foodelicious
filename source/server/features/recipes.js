@@ -69,9 +69,7 @@ io.http.on('get', '/recipes/:id', function (params, callback) {
 	], callback);
 });
 
-io.http.on('post', '/recipes/:id/comment', {
-	comment: { type: 'string', minLength: 1 }
-}, [ Users.isAuthenticated, function (params, callback, connected) {
+function CommentRecipe (params, callback, connected) {
 	var _recipe = null;
 	var _comment = null;
 
@@ -97,7 +95,16 @@ io.http.on('post', '/recipes/:id/comment', {
 			return next(null, _comment);
 		}
 	], callback);
-}]);
+}
+
+io.http.on('post', '/recipes/:id/comments', {
+	comment: { type: 'string', minLength: 1 }
+}, [ Users.isAuthenticated, CommentRecipe]);
+
+// To deprecate
+io.http.on('post', '/recipes/:id/comment', {
+	comment: { type: 'string', minLength: 1 }
+}, [ Users.isAuthenticated, CommentRecipe]);
 
 io.http.on('get', '/recipes/:id/comments', function (params, callback) {
 	async.waterfall([
