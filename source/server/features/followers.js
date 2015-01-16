@@ -98,8 +98,9 @@ function notifyFollowers(user, action, callback) {
 			}, next);
 		},
 		function (next) {
+			// dont notify owner
 			return Feed.save({
-				to: action.createdBy,
+				to: "-1",
 				from: action.createdBy,
 				action: action.id
 			}, next);
@@ -113,7 +114,7 @@ function notifyFollowers(user, action, callback) {
 function getUserFeed(user, start, callback) {
 	async.waterfall([
 		function (next) {
-			return Feed.find({ to: user }, { start: start, sort: { "dateCreation": 1 } }, next);
+			return Feed.find({ to: user }, { start: start, sort: { "dateCreation": -1 } }, next);
 		},
 		function (feed, next) {
 			return async.map(feed.hits, function (item, async) {
@@ -126,7 +127,7 @@ function getUserFeed(user, start, callback) {
 function getFeedFromUser(user, start, callback) {
 	async.waterfall([
 		function (next) {
-			return Feed.find({ to: user, from: user }, { start: start, sort: { "dateCreation": 1 } }, next);
+			return Feed.find({ to: "-1", from: user }, { start: start, sort: { "dateCreation": -1 } }, next);
 		},
 		function (feed, next) {
 			return async.map(feed.hits, function (item, async) {

@@ -25,6 +25,7 @@ io.http.on('post', '/recipes', {
 	},
 	steps: { type: 'array', items: { type: 'string', minLength: 1 }}
 }, [ Users.isAuthenticated, function (params, callback, connected) {
+	var _recipe = null;
 	async.waterfall([
 		function (next) {
 			// Check if ingredients are goods
@@ -33,16 +34,26 @@ io.http.on('post', '/recipes', {
 		function (docs, next) {
 
 			// Default parameters
-			params.likes = 0;
 			params.comments = 0;
+			params.likes = 0;
 			params.stars = 0;
 
 			params.createdBy = connected.id;
-			// Create feed info 
-
+			// Create feed info
 			return database.save(params, next);
+		},
+		function (recipe, next) {
+			_recipe = recipe;
+			return Actions.created({
+				createdBy: connected.id,
+				ressource_type: "recipe",
+				ressource: recipe.id,
+				name: recipe.name
+			}, next);
 		}
-	], callback);
+	], function (err, action) {
+		return callback(err, _recipe);
+	});
 }]);
 
 io.http.on('get', '/recipes', function (params, callback) {
@@ -81,9 +92,9 @@ function CommentRecipe (params, callback, connected) {
 			_recipe = recipe;
 			return Actions.comment({
 				createdBy: connected.id,
-				comment: params.comment,
 				ressource_type: "recipe",
 				ressource: recipe.id,
+				comment: params.comment
 			}, next);
 		},
 		function (comment, next) {
@@ -121,3 +132,39 @@ io.http.on('get', '/recipes/:id/comments', function (params, callback) {
 		}
 	], callback);
 });
+
+io.http.on(
+	'post'
+	, '/recipes/:id/like'
+	, [Users.isAuthenticated
+	, function (params, callback, connected) {
+		var _recipe = null;
+		var _action = null;
+
+		async.waterfall([
+			function (next) {
+				return database.get(params.id, next);
+			},
+			function (recipe, next) {
+				_recipe = recipe;
+				return Actions.findActions({ ressource: params.id, type: 'like', createdBy: connected.id}, { start: 0, limit: 1 }, next);
+			},
+			function (liked, next) {
+				if (liked && liked.hits.length) return next(ERROR(400, 'You already like this recipe.'));
+				return Actions.like({
+					createdBy: connected.id,
+					ressource_type: "recipe",
+					ressource: _recipe.id
+				}, next);
+			},
+			function (action, next) {
+				++_recipe.like;
+				_action = action;
+				return database.save(_recipe, next);
+			},
+			function (recipe, next) {
+				return next(null, _action);
+			}
+		], callback);
+
+	}]);
