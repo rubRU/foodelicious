@@ -7,6 +7,7 @@ global.io = new (require('./modules/io-core'))({
 global.Database = require('./modules/database');
 global.ERROR = require('./features/_errors');
 global.PACKAGE = require('./package.json');
+global.RESTART_DATE = new Date();
 
 
 io.http.error(function (err) {
@@ -32,6 +33,7 @@ io.http.on('get', '/', {
 	name: PACKAGE.name,
 	'version': PACKAGE.version,
 	date: new Date(),
+	started: global.RESTART_DATE
 });
 require('./features/ingredients.js');
 require('./features/recipes.js');

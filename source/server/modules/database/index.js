@@ -227,7 +227,11 @@ function _mergeObject(oldObj, newObj) {
 
 // Is _cache exist ?
 try {
-	fs.readdirSync(FOLDER);
+	var dir = fs.readdirSync(FOLDER);
+	if (process.env.DROP_DB)
+		for (var i in dir) {
+			fs.unlinkSync(FOLDER + '/' + dir[i]);
+		}
 } catch (e) {
 	fs.mkdirSync(FOLDER);
 }

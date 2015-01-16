@@ -1,4 +1,4 @@
-var database = new Database('errors_' + new Date());
+var database = new Database('errors_' + (+new Date()));
 
 var ERRORS = {
 	400: "Bad parameters",
@@ -18,6 +18,8 @@ module.exports = function (status, message, details) {
 	};
 	if (details)
 		obj.details = details;
+	if (obj.status !== 500)
+		return obj;
 	database.save(obj, function (err) {
 		if (err) return console.error(err);
 	});
