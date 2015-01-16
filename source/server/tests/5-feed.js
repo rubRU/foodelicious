@@ -84,8 +84,8 @@ suite('Feed', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(1);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(1);
 
 			done();
 		});		
@@ -98,8 +98,8 @@ suite('Feed', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(0);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(0);
 
 			done();
 		});
@@ -112,8 +112,8 @@ suite('Feed', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(1);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(1);
 
 			done();
 		});		
@@ -165,8 +165,8 @@ suite('Feed', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(1);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(1);
 
 			done();
 		});
@@ -179,8 +179,8 @@ suite('Feed', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(2);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(2);
 
 			done();
 		});		
@@ -196,8 +196,8 @@ suite('Deprecated methods - Migration support test', function () {
 			should.exist(ret);
 			should.exist(ret.body);
 			var hash = ret.body;
-
-			hash.length.should.equal(2);
+			should.exist(hash.feed);
+			hash.feed.length.should.equal(2);
 
 			done();
 		});		
