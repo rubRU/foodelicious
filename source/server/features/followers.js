@@ -110,7 +110,7 @@ function notifyFollowers(user, action, callback) {
 	], callback);
 }
 
-function getFeedForUser(user, start, callback) {
+function getUserFeed(user, start, callback) {
 	async.waterfall([
 		function (next) {
 			return Feed.find({ to: user }, { start: start, sort: { "dateCreation": 1 } }, next);
@@ -123,7 +123,7 @@ function getFeedForUser(user, start, callback) {
 	], callback);
 }
 
-function getUserFeed(user, start, callback) {
+function getFeedFromUser(user, start, callback) {
 	async.waterfall([
 		function (next) {
 			return Feed.find({ to: user, from: user }, { start: start, sort: { "dateCreation": 1 } }, next);
@@ -142,4 +142,4 @@ exports.addFollower = addFollower;
 exports.removeFollower = removeFollower;
 exports.getFollowers = getFollowers;
 exports.getUserFeed = getUserFeed;
-exports.getFeedForUser = getFeedForUser;
+exports.getFeedFromUser = getFeedFromUser;

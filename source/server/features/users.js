@@ -259,7 +259,7 @@ io.http.on('get', '/users/:id/followers', function (params, callback, connected)
 	@desc: Get the user feed
 */
 io.http.on('get', '/user/feed', [isAuthenticated, function (params, callback, connected) {
-	return Followers.getFeedForUser(connected.id, params.start || 0, function (err, feed) {
+	return Followers.getUserFeed(connected.id, params.start || 0, function (err, feed) {
 		if (err) return callback(err);
 		return callback(null, { feed: feed });
 	});
@@ -268,13 +268,13 @@ io.http.on('get', '/user/feed', [isAuthenticated, function (params, callback, co
 /*
 	@desc: Get the user feed
 */
-function getUserFeed (params, callback, connected) {
+function getFeedFromUser (params, callback, connected) {
 	async.waterfall([
 		function (next) {
 			return database.get(params.id, next);
 		},
 		function (user, next) {
-			return Followers.getUserFeed(user.id, params.start || 0, next);
+			return Followers.getFeedFromUser(user.id, params.start || 0, next);
 		}
 	], function (err, feed) {
 		if (err) return callback(err);
@@ -282,6 +282,6 @@ function getUserFeed (params, callback, connected) {
 	});
 }
 
-io.http.on('get', '/users/:id/feed', [getConnected, getUserFeed]);
+io.http.on('get', '/users/:id/feed', [getConnected, getFeedFromUser]);
 // To deprecate
-io.http.on('get', '/user/:id/feed', [getConnected, getUserFeed]);
+io.http.on('get', '/user/:id/feed', [getConnected, getFeedFromUser]);
