@@ -2,9 +2,9 @@
 
 API for Foodelicious.
 
-**Version**: 0.1.2
+**Version**: 0.1.3
 
-**Changelog**: [Changelog for 0.1.2](https://github.com/rubRU/foodelicious/blob/master/source/server/CHANGELOG.md)
+**Changelog**: [Changelog for 0.1.3](https://github.com/rubRU/foodelicious/blob/master/source/server/CHANGELOG.md)
 
 ## APIs
 
