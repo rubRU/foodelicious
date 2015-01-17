@@ -3,6 +3,9 @@
  * [GET] /recipes/:id/comments now return a search hash (with start && limits)
  * Added ingredients base
 
+## Hotfixs 0.1.3.1
+    * Like fixed
+
 # 0.1.2
 
 ## Feed

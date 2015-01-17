@@ -1,3 +1,0 @@
-{"$$indexCreated":{"fieldName":"to","unique":false,"sparse":false}}
-{"$$indexCreated":{"fieldName":"from","unique":false,"sparse":false}}
-{"$$indexCreated":{"fieldName":"dateCreation","unique":false,"sparse":false}}

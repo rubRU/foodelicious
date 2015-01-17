@@ -158,7 +158,7 @@ io.http.on(
 				}, next);
 			},
 			function (action, next) {
-				++_recipe.like;
+				++_recipe.likes;
 				_action = action;
 				return database.save(_recipe, next);
 			},
