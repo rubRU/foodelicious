@@ -128,7 +128,7 @@ io.http.on('get', '/recipes/:id/comments', function (params, callback) {
 			return Actions.findActions({ ressource: params.id, type: 'comment'}, { start: params.start, limit: params.limit }, next);
 		},
 		function (comments, next) {
-			return next(null, comments.hits);
+			return next(null, comments);
 		}
 	], callback);
 });

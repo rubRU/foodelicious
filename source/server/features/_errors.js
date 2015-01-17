@@ -1,4 +1,4 @@
-var database = new Database('errors_' + (+new Date()));
+var database = new Database('errors');
 
 var ERRORS = {
 	400: "Bad parameters",

@@ -90,3 +90,30 @@ io.http.on('put', '/ingredients/:id', {
 		}
 	], callback);
 });
+
+(function () {
+	var ingredients = require('../assets/ingredients.json');
+	async.waterfall([
+		function (next) {
+			return database.count(next);
+		},
+		function (count, next) {
+			if (count) return next(true);
+			var _done = 0;
+			for (var i in ingredients) {
+				++count;
+				(function (item) {
+					database.save(item, function (err, res) {
+						++_done;
+						if (err) console.log(err);
+						if (_done === count) return next(null);
+					});
+				})(ingredients[i]);
+			}
+		}
+	],	function (err, res) {
+		if (err && err === true) return;
+		if (err) return ERROR(500, "Unable to populate ingredients db.");
+		return;
+	});
+})();

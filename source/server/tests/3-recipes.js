@@ -76,4 +76,44 @@ suite('Recipes', function () {
 			done();
 		});
 	});
+
+	test('Should comment a recipe', function (done) {
+		var comment = "je suis un commentaire";
+		request
+		.post('/recipes/' + DATA.recipes[0].id + '/comments')
+		.set('X-API-user', DATA.users[0].id)
+		.set('X-API-token', DATA.users[0].token)
+		.send({ comment: comment })
+		.expect(200, function (err, ret) {
+			should.not.exist(err);
+			should.exist(ret);
+			should.exist(ret.body);
+			var hash = ret.body;
+
+			hash.should.have.property('createdBy', DATA.users[0].id);
+			hash.should.have.property('comment', comment);
+			hash.should.have.property('ressource_type', 'recipe');
+			hash.should.have.property('ressource', DATA.recipes[0].id);
+			done();
+		});
+	});
+
+	test('Should get comments for recipe', function (done) {
+		request
+		.get('/recipes/' + DATA.recipes[0].id + '/comments')
+		.set('X-API-user', DATA.users[0].id)
+		.set('X-API-token', DATA.users[0].token)
+		.expect(200, function (err, ret) {
+			should.not.exist(err);
+			should.exist(ret);
+			should.exist(ret.body);
+			var hash = ret.body;
+
+			should.exists(hash.hits);
+			hash.hits.should.have.property('length', 1);
+			hash.hits[0].should.have.property('createdBy');
+			hash.hits[0].createdBy.should.have.property('name', 'Romuald');
+			done();
+		});
+	});
 });

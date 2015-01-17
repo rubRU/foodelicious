@@ -6,3 +6,9 @@ global.DATA = {};
 
 // Launch server
 require('../index.js');
+require('./1-users.js');
+require('./2-ingredients.js');
+require('./3-recipes.js');
+require('./4-followers.js');
+require('./5-feed.js');
+require('./6-actions.js');

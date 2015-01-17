@@ -9,7 +9,6 @@ global.ERROR = require('./features/_errors');
 global.PACKAGE = require('./package.json');
 global.RESTART_DATE = new Date();
 
-
 io.http.error(function (err) {
 	if (!err || !Array.isArray(err) || !err.length)
 		return ERROR(400, 'Please follow API instructions on foodelicious wiki.', err);

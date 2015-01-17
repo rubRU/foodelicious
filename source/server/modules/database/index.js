@@ -23,7 +23,7 @@ function Database(name, indexes) {
 	if (DATABASES[name])
 		return DATABASES[name];
 	if (name && !global._TEST_)
-		this.database = new Datastore({ filename: FOLDER + '/' + name + '.db', autoload: true });
+		this.database = new Datastore({ filename: FOLDER + '/' + name, autoload: true });
 	else
 		this.database = new Datastore();
 	DATABASES[name] = this;
@@ -152,6 +152,17 @@ Database.prototype.findAll = function (options, callback) {
 		options = {};
 	}
 	return this.find({}, options, callback);
+};
+
+Database.prototype.count = function(query, callback) {
+	if (!callback && typeof query === "function") {
+		callback = query;
+		query = {};
+	}
+	this.database.count(query, function (err, res) {
+		if (err) return callback(new DatabaseError("Unable to count documents [" + err + "]", 500));
+		return callback(null, res);
+	});
 };
 
 // Private functions

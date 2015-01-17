@@ -40,7 +40,7 @@ suite('Feed', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 			
-			hash.comments.should.equal(1);
+			hash.comments.should.equal(2);
 			//TESTS
 
 			done();
@@ -55,7 +55,7 @@ suite('Feed', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 
-			hash.length.should.equal(1);
+			hash.hits.length.should.equal(2);
 
 			done();
 		});
@@ -69,7 +69,7 @@ suite('Feed', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 
-			hash.length.should.equal(1);
+			hash.hits.length.should.equal(2);
 
 			done();
 		});
@@ -113,7 +113,7 @@ suite('Feed', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 			should.exist(hash.feed);
-			hash.feed.length.should.equal(2);
+			hash.feed.length.should.equal(3);
 
 			done();
 		});		
@@ -180,7 +180,7 @@ suite('Feed', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 			should.exist(hash.feed);
-			hash.feed.length.should.equal(3);
+			hash.feed.length.should.equal(4);
 
 			done();
 		});		
@@ -197,7 +197,7 @@ suite('Deprecated methods - Migration support test', function () {
 			should.exist(ret.body);
 			var hash = ret.body;
 			should.exist(hash.feed);
-			hash.feed.length.should.equal(3);
+			hash.feed.length.should.equal(4);
 
 			done();
 		});		

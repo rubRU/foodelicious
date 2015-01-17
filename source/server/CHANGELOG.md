@@ -1,3 +1,8 @@
+# 0.1.3
+ * Corrected [GET] /recipes/:id/comments
+ * [GET] /recipes/:id/comments now return a search hash (with start && limits)
+ * Added ingredients base
+
 # 0.1.2
 
 ## Feed

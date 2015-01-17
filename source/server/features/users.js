@@ -176,7 +176,7 @@ exports.getFullUser = getFullUser;
 	@params: None
 */
 function getUser(id, callback) {
-	return database.find({ id: id }, {fields: ['name', 'id']}, function (err, users) {
+	return database.find({ _id: id }, {fields: ['name', 'id']}, function (err, users) {
 		if (!users.hits.length) return callback(ERROR(404, 'Id [' + id + '] not found.'));
 		return callback(null, users.hits[0]);
 	});
